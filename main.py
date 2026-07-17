@@ -68,3 +68,24 @@ def delete_task(task_id: int):
             tasks.remove(task)
             return
     return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
+
+
+@app.get("/stats")
+def get_stats():
+    total_tasks = len(tasks)
+
+    # List comprehension to filter only the completed tasks, then get the length
+    completed_tasks = len([task for task in tasks if task.get("done") == True])
+
+    # Protect against ZeroDivisionError
+    if total_tasks > 0:
+        percentage = (completed_tasks / total_tasks) * 100
+    else:
+        percentage = 0
+
+    return {
+        "total": total_tasks,
+        "completed": completed_tasks,
+        # round to 2 decimal places
+        "completion_percentage": round(percentage, 2)
+    }
