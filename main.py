@@ -45,3 +45,26 @@ def create_task(task_data: dict):
     tasks.append(new_task)
 
     return new_task
+
+
+@app.put("/tasks/{task_id}")
+def update_task(task_id: int, task_data: dict):
+    if not task_data or ("title" in task_data and task_data["title"] == ""):
+        return JSONResponse(status_code=400, content={"error": "Invalid task data"})
+    for task in tasks:
+        if task["id"] == task_id:
+            if "title" in task_data:
+                task["title"] = task_data["title"]
+            if "done" in task_data:
+                task["done"] = task_data["done"]
+            return task
+    return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
+
+
+@app.delete("/tasks/{task_id}", status_code=204)
+def delete_task(task_id: int):
+    for task in tasks:
+        if task["id"] == task_id:
+            tasks.remove(task)
+            return
+    return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
