@@ -2,10 +2,11 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
+
 tasks = [
-    {"id": 1, "name": "Apple", "in_stock": True},
-    {"id": 2, "name": "Banana", "in_stock": False},
-    {"id": 3, "name": "Cherry", "in_stock": True}
+    {"id": 1, "title": "Buy milk", "done": False},
+    {"id": 2, "title": "Walk the dog", "done": True},
+    {"id": 3, "title": "Learn FastAPI", "done": False}
 ]
 
 
@@ -19,12 +20,6 @@ def health():
     return {"status": "ok"}
 
 
-@app.get("/items/{item_id}")
-def get_single_item(item_id: int):
-    # Now item_id is available as a normal integer inside this function!
-    pass
-
-
 @app.get("/tasks")
 def get_tasks():
     return tasks
@@ -35,4 +30,18 @@ def get_task(task_id: int):
     for task in tasks:
         if task["id"] == task_id:
             return task
-    return JSONResponse(status_code=404, content={"error": f"Item {task_id} not found"})
+    return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
+
+
+@app.post("/tasks", status_code=201)
+def create_task(task_data: dict):
+
+    if "title" not in task_data or task_data["title"] == "":
+        return JSONResponse(status_code=400, content={"error": "Task title is required"})
+
+    new_id = len(tasks) + 1
+
+    new_task = {"id": new_id, "title": task_data["title"], "done": False}
+    tasks.append(new_task)
+
+    return new_task
