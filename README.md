@@ -25,3 +25,6 @@ Here is an example of fetching the health endpoint using curl:
 {
   "status": "ok"
 }
+
+Swagger UI
+![alt text](<Screenshot 2026-07-17 200346.png>)
