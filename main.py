@@ -17,24 +17,25 @@ def root():
 
 @app.get("/health")
 def health():
+    """
+    Returns the health status of the API.
+    """
     return {"status": "ok"}
 
 
 @app.get("/tasks")
 def get_tasks():
+    """
+    Returns a list of all current tasks in the to-do list.
+    """
     return tasks
-
-
-@app.get("/tasks/{task_id}")
-def get_task(task_id: int):
-    for task in tasks:
-        if task["id"] == task_id:
-            return task
-    return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
 
 
 @app.post("/tasks", status_code=201)
 def create_task(task_data: dict):
+    """
+    Creates a new task and adds it to the to-do list.
+    """
 
     if "title" not in task_data or task_data["title"] == "":
         return JSONResponse(status_code=400, content={"error": "Task title is required"})
@@ -49,6 +50,9 @@ def create_task(task_data: dict):
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id: int, task_data: dict):
+    """
+    Updates an existing task in the to-do list.
+    """
     if not task_data or ("title" in task_data and task_data["title"] == ""):
         return JSONResponse(status_code=400, content={"error": "Invalid task data"})
     for task in tasks:
@@ -63,6 +67,9 @@ def update_task(task_id: int, task_data: dict):
 
 @app.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: int):
+    """
+    Deletes a task from the to-do list.
+    """
     for task in tasks:
         if task["id"] == task_id:
             tasks.remove(task)
@@ -72,6 +79,9 @@ def delete_task(task_id: int):
 
 @app.get("/stats")
 def get_stats():
+    """
+    Returns statistics about the tasks in the to-do list.
+    """
     total_tasks = len(tasks)
 
     # List comprehension to filter only the completed tasks, then get the length
